@@ -1,55 +1,36 @@
-// const express = require('express');
-// const mongoose = require('mongoose');
-// const bodyParser = require('body-parser');
-// const cors = require('cors');
-// const dotenv = require('dotenv');
-
-// dotenv.config();
-// const app = express();
-
-// const PORT = process.env.PORT || 5002; //Backend URL
-
-// app.use(cors());
-// app.use(bodyParser.json());
-
-// const URL = process.env.MONGODB_URL || 'mongodb://localhost:27017/MistyEMS';
-
-// mongoose.connect(URL)
-//   .then(() => console.log('MongoDB connection successful'))
-//   .catch(err => console.error('MongoDB connection error:', err));
-
-//   const studentRouter = require('./routes/Student');
-//   app.use('/Student', studentRouter); //Check this line
-
-// app.listen(PORT, () => {
-//     console.log(`Server is running on port number: ${PORT}`);
-// });
-
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const dotenv = require('dotenv');
 
+// Load environment variables from .env file
 dotenv.config();
+
 const app = express();
+const PORT = process.env.PORT || 5009;
 
-const PORT = process.env.PORT || 5005; // Backend URL
-
+// Enable CORS and JSON body parsing
 app.use(cors());
 app.use(bodyParser.json());
 
-const URL = process.env.MONGODB_URL || 'mongodb://localhost:27017/MistyEMS';
-
-mongoose.connect(URL)
+// Connect to MongoDB Atlas (or local)
+const URL = process.env.MONGODB_URL || 'mongodb://localhost:27017/TrelloClone';
+mongoose.connect(URL, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connection successful'))
   .catch(err => console.error('MongoDB connection error:', err));
 
-// Ensure correct case for file import (If your file is `Students.js`, change to `require('./routes/Students')`)
-const studentRouter = require('./routes/Students'); 
-app.use('/Student', studentRouter);
+// Import routes
+const boardRoutes = require('./routes/boardRoutes');
+const listRoutes = require('./routes/listRoutes');
+const cardRoutes = require('./routes/cardRoutes');
 
+// Register routes
+app.use('/api/boards', boardRoutes);
+app.use('/api/lists', listRoutes);
+app.use('/api/cards', cardRoutes);
+
+// Start the server
 app.listen(PORT, () => {
-    console.log(`Server is running on port number: ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
-
